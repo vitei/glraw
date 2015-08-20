@@ -26,8 +26,9 @@ QByteArray Converter::convert(QImage & image, AssetInformation & info)
     
     info.setProperty("format", QVariant(static_cast<int>(m_format)));
     info.setProperty("type", QVariant(static_cast<int>(m_type)));
+    info.setProperty("mipmapLevel", QVariant(static_cast<int>(m_mipmapLevel)));
     
-    return m_canvas.imageFromTexture(m_format, m_type);
+    return m_canvas.imageFromTexture(m_format, m_type, m_mipmapLevel);
 }
 
 void Converter::setFormat(GLenum format)

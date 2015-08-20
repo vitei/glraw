@@ -23,8 +23,8 @@ public:
     void initializeGL();
 
     void loadTextureFromImage(const QImage & image);
-    QByteArray imageFromTexture(GLenum format, GLenum type);
-    QByteArray compressedImageFromTexture(GLenum compressedInternalFormat);
+    QByteArray imageFromTexture(GLenum format, GLenum type, GLint mipmapLevel);
+    QByteArray compressedImageFromTexture(GLenum compressedInternalFormat, GLint mipmapLevel);
 
     bool process(
         const QString & fragmentShader

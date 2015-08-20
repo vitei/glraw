@@ -93,7 +93,7 @@ void Canvas::loadTextureFromImage(const QImage & image)
     m_context.doneCurrent();
 }
     
-QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
+QByteArray Canvas::imageFromTexture(GLenum format, GLenum type, GLint mipmapLevel)
 {
     assert(textureLoaded());
     
@@ -115,9 +115,9 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type)
     return imageData;
 }
     
-QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat)
+QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat, GLint mipmapLevel)
 {
-    QByteArray uncompressedImageData = imageFromTexture(GL_RGBA, GL_UNSIGNED_BYTE);
+    QByteArray uncompressedImageData = imageFromTexture(GL_RGBA, GL_UNSIGNED_BYTE, mipmapLevel);
     
     m_context.makeCurrent(this);
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);

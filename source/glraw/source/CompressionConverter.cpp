@@ -23,10 +23,11 @@ QByteArray CompressionConverter::convert(QImage & image, AssetInformation & info
     if (hasFragmentShader() && !m_canvas.process(m_fragmentShader, m_uniforms))
         return QByteArray();
     
-    QByteArray imageData = m_canvas.compressedImageFromTexture(m_compressedFormat);
+    QByteArray imageData = m_canvas.compressedImageFromTexture(m_compressedFormat, m_mipmapLevel);
     
     info.setProperty("compressedFormat", QVariant(static_cast<int>(m_compressedFormat)));
     info.setProperty("size", QVariant(imageData.size()));
+    info.setProperty("mipmapLevel", QVariant(static_cast<int>(m_mipmapLevel)));
     
     return imageData;
 }
