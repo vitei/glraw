@@ -54,6 +54,7 @@ protected:
     bool aspectRatioMode(const QString & name);
     bool shader(const QString & name);
     bool uniform(const QString & name);
+    bool mipmapLevel(const QString & name);
 
 protected:
     bool editorExists(const QString & key);
@@ -77,6 +78,7 @@ protected:
     glraw::AbstractConverter * m_converter;
     glraw::FileWriter * m_writer;
     glraw::ConvertManager m_manager;
+    int m_mipmapLevel;
 
 };
 

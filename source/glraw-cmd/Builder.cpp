@@ -33,6 +33,7 @@ Builder::Builder()
 :   m_converter(nullptr)
 ,   m_writer(new glraw::FileWriter())
 ,   m_manager(m_writer)
+,   m_mipmapLevel(0)
 {
     initialize();
 }
@@ -181,6 +182,13 @@ QList<CommandLineOption> Builder::commandLineOptions()
         &Builder::uniform
     });
 
+    options.append({
+        QStringList() << "mipmap-level",
+        "LOD number of desired image (default: 0)",
+        "integer",
+        &Builder::mipmapLevel
+    });
+
     return options;
 }
 
@@ -233,7 +241,8 @@ void Builder::process(const QCoreApplication & app)
     
     if (!configureShader())
         return;
-    
+
+    m_converter->setMipmapLevel(m_mipmapLevel);
     m_manager.setConverter(m_converter);
 
     QStringList sources = m_parser.positionalArguments();
@@ -560,6 +569,24 @@ bool Builder::uniform(const QString & name)
 {
     if (m_uniformList.isEmpty())
         m_uniformList = m_parser.values(name);
+
+    return true;
+}
+
+bool Builder::mipmapLevel(const QString & name)
+{
+    QString mipmapLevelString = m_parser.value(name);
+
+    bool ok;
+    int mipmapLevel = mipmapLevelString.toInt(&ok);
+
+    if (!ok)
+    {
+        qDebug() << mipmapLevelString << "isn't an int.";
+        return false;
+    }
+
+    m_mipmapLevel = mipmapLevel;
 
     return true;
 }
