@@ -11,6 +11,7 @@ namespace glraw
 
 AbstractConverter::AbstractConverter()
 :   m_fragmentShader("")
+,   m_mipmapLevel(0)
 {
 }
 
@@ -55,6 +56,11 @@ bool AbstractConverter::setUniform(const QString & assignment)
     m_uniforms.insert(terms[0], terms[1]);
 
     return true;
+}
+
+void AbstractConverter::setMipmapLevel(GLint mipmapLevel)
+{
+	m_mipmapLevel = mipmapLevel;
 }
 
 } // namespace glraw

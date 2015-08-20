@@ -29,10 +29,12 @@ public:
     bool setFragmentShader(const QString & sourcePath);
 
     bool setUniform(const QString & assignment);
+    void setMipmapLevel(GLint mipmapLevel);
 
 protected:
     Canvas m_canvas;
     QString m_fragmentShader;
+    GLint  m_mipmapLevel;
 
     QMap<QString, QString> m_uniforms;
 };
