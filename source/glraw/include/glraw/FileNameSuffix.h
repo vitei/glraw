@@ -21,12 +21,14 @@ public:
 		int width,
 		int height,
 		GLenum format,
-		GLenum type);
+		GLenum type,
+		GLint mipmapLevel);
 
 	FileNameSuffix(
 		int width,
 		int height,
-		GLenum compressedType);
+		GLenum compressedType,
+		GLint mipmapLevel);
 
 	/** \return Returns true, if width, height, type, and format if not compressed have valid values.
 	*/
@@ -41,6 +43,11 @@ public:
 				Is -1 when no height is provided.
 	*/
 	int height() const;
+
+	/** \return Returns mipmap level (where 0 is the main image) of raw texture file name suffix;
+				Is -1 when no count is provided.
+	*/
+	GLint mipmapLevel() const;
 
 	/** \return Returns type of raw texture file name suffix; 
 				Is GL_INVALID_ENUM when type is not unknown or not provided.
@@ -78,6 +85,7 @@ protected:
 	
 	GLenum m_format;
 	GLenum m_type;
+	GLint m_mipmapLevel;
 };
 
 } // namespace glraw

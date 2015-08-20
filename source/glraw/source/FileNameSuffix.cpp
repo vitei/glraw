@@ -61,20 +61,21 @@ namespace glraw
 {
 
 FileNameSuffix::FileNameSuffix(const QString & fileName)
-: m_width (-1)
+: m_compressed(false)
+, m_width (-1)
 , m_height(-1)
 , m_format(GL_INVALID_ENUM)
 , m_type(GL_INVALID_ENUM)
-, m_compressed(false)
+, m_mipmapLevel(-1)
 {
 	// check if either compressed or uncompressed (or unknown) format
 
-	QRegExp regexp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.raw$)");
+	QRegExp regexp(R"(^.*\.(\d+)\.(\d+)\.(\d+)\.(\w+)\.raw$)");
 	if (regexp.exactMatch(fileName))
 		m_compressed = true;
 	else
 	{
-		regexp = QRegExp(R"(^.*\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.raw$)");
+		regexp = QRegExp(R"(^.*\.(\d+)\.(\d+)\.(\d+)\.(\w+)\.(\w+)\.raw$)");
 		if (!regexp.exactMatch(fileName))
 			return;
 	}
@@ -91,44 +92,50 @@ FileNameSuffix::FileNameSuffix(const QString & fileName)
 	m_height = parts[2].toInt(&ok);
 	assert(ok);
 
+	m_mipmapLevel = parts[3].toInt(&ok);
+	assert(ok);
+
 	if (!m_compressed)
 	{
-		m_format = format(parts[3]);
+		m_format = format(parts[4]);
 		assert(m_format != GL_INVALID_ENUM);
 	}
 
-	m_type = type(parts[m_compressed ? 3 : 4]);
+	m_type = type(parts[m_compressed ? 4 : 5]);
 	assert(m_type != GL_INVALID_ENUM);
 }
 
 FileNameSuffix::FileNameSuffix(
-	const int width, const int height, const GLenum format, const GLenum type)
-: m_width(width)
+	const int width, const int height, const GLenum format, const GLenum type, const GLint mipmapLevel)
+: m_compressed(false)
+, m_width(width)
 , m_height(height)
 , m_format(format)
 , m_type(type)
-, m_compressed(false)
+, m_mipmapLevel(mipmapLevel)
 {
-	m_suffix = QString(".%1.%2.%3.%4")
-		.arg(m_width).arg(m_height).arg(formatSuffix(m_format)).arg(typeSuffix(m_type));
+	m_suffix = QString(".%1.%2.%3.%4.%5")
+		.arg(m_width).arg(m_height).arg(m_mipmapLevel).arg(formatSuffix(m_format)).arg(typeSuffix(m_type));
 }
 
 FileNameSuffix::FileNameSuffix(
-	const int width, const int height, const GLenum compressedType)
-: m_width(width)
+	const int width, const int height, const GLenum compressedType, const GLint mipmapLevel)
+: m_compressed(true)
+, m_width(width)
 , m_height(height)
 , m_format(GL_INVALID_ENUM)
 , m_type(compressedType)
-, m_compressed(true)
+, m_mipmapLevel(mipmapLevel)
 {
-    m_suffix = QString(".%1.%2.%3")
-        .arg(m_width).arg(m_height).arg(typeSuffix(m_type));
+    m_suffix = QString(".%1.%2.%3.%4")
+        .arg(m_width).arg(m_height).arg(m_mipmapLevel).arg(typeSuffix(m_type));
 }
 
 bool FileNameSuffix::isValid() const
 {
 	return m_width  != -1
 		&& m_height != -1
+		&& m_mipmapLevel != -1
 		&& m_type   != GL_INVALID_ENUM
 		&& (m_compressed || m_format != GL_INVALID_ENUM);
 }
@@ -141,6 +148,11 @@ int FileNameSuffix::width() const
 int FileNameSuffix::height() const
 {
 	return m_height;
+}
+
+GLint FileNameSuffix::mipmapLevel() const
+{
+	return m_mipmapLevel;
 }
 
 GLenum FileNameSuffix::type() const

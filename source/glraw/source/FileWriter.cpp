@@ -183,7 +183,8 @@ QString FileWriter::targetFilePath(const QString & sourcePath, const AssetInform
 QString FileWriter::suffixesForImage(const AssetInformation & info)
 {
 	const FileNameSuffix suffix(info.property("width").toInt(), info.property("height").toInt(),
-		static_cast<GLenum>(info.property("format").toInt()), static_cast<GLenum>(info.property("type").toInt()));
+		static_cast<GLenum>(info.property("format").toInt()), static_cast<GLenum>(info.property("type").toInt()),
+		static_cast<GLenum>(info.property("mipmapLevel").toInt()));
 
 	return suffix.get();
 }
@@ -191,7 +192,8 @@ QString FileWriter::suffixesForImage(const AssetInformation & info)
 QString FileWriter::suffixesForCompressedImage(const AssetInformation & info)
 {
 	const FileNameSuffix suffix(info.property("width").toInt(), info.property("height").toInt(),
-		static_cast<GLenum>(info.property("compressedFormat").toInt()));
+		static_cast<GLenum>(info.property("compressedFormat").toInt()),
+		static_cast<GLenum>(info.property("mipmapLevel").toInt()));
 
 	return suffix.get();
 }
