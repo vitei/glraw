@@ -87,7 +87,8 @@ void Canvas::loadTextureFromImage(const QImage & image)
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     m_gl->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8
         , glImage.width(), glImage.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, glImage.bits());
-    
+    m_gl->glGenerateMipmap(GL_TEXTURE_2D);
+
     m_gl->glBindTexture(GL_TEXTURE_2D, 0);
     
     m_context.doneCurrent();
@@ -101,14 +102,14 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type, GLint mipmapLeve
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_WIDTH, &width);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_HEIGHT, &height);
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
-    
-    m_gl->glGetTexImage(GL_TEXTURE_2D, 0, format, type, imageData.data());
-    
+
+    m_gl->glGetTexImage(GL_TEXTURE_2D, mipmapLevel, format, type, imageData.data());
+
     m_gl->glBindTexture(GL_TEXTURE_2D, 0);
     m_context.doneCurrent();
     
@@ -123,21 +124,21 @@ QByteArray Canvas::compressedImageFromTexture(GLenum compressedInternalFormat, G
     m_gl->glBindTexture(GL_TEXTURE_2D, m_texture);
     
     GLint width, height;
-    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_WIDTH, &width);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_HEIGHT, &height);
     
     GLuint compressedTexture;
     m_gl->glGenTextures(1, &compressedTexture);
     m_gl->glBindTexture(GL_TEXTURE_2D, compressedTexture);
-    m_gl->glTexImage2D(GL_TEXTURE_2D, 0, compressedInternalFormat, width, height, 0
+    m_gl->glTexImage2D(GL_TEXTURE_2D, mipmapLevel, compressedInternalFormat, width, height, 0
         , GL_RGBA, GL_UNSIGNED_BYTE, uncompressedImageData);
     
     GLint size;
-    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
+    m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &size);
     
     QByteArray compressedImageData;
     compressedImageData.resize(size);
-    m_gl->glGetCompressedTexImage(GL_TEXTURE_2D, 0, compressedImageData.data());
+    m_gl->glGetCompressedTexImage(GL_TEXTURE_2D, mipmapLevel, compressedImageData.data());
     
     m_context.doneCurrent();
     
