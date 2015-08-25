@@ -31,6 +31,7 @@ public:
     ,   const QMap<QString, QString> & uniforms);
 
     bool textureLoaded() const;
+    void getImageDimensions(GLint & width, GLint & height) const;
 
 protected:
     static int byteSizeOf(GLenum type);
@@ -38,6 +39,12 @@ protected:
     
     QOpenGLContext m_context;
     GLuint m_texture;   
+
+    // These are the dimensions of the image that we actually load.
+    // They will differ from the main image if a mipmap level greater
+    // than 0 is specified.
+    GLint m_width;
+    GLint m_height;
 
     // using gl as a memeber instead of inheritance 
     // probably resolves an deinitialization issue.

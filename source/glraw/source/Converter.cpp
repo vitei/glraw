@@ -27,8 +27,18 @@ QByteArray Converter::convert(QImage & image, AssetInformation & info)
     info.setProperty("format", QVariant(static_cast<int>(m_format)));
     info.setProperty("type", QVariant(static_cast<int>(m_type)));
     info.setProperty("mipmapLevel", QVariant(static_cast<int>(m_mipmapLevel)));
+
+    QByteArray imageFromCanvas = m_canvas.imageFromTexture(m_format, m_type, m_mipmapLevel);
+
+    if (m_mipmapLevel != 0)
+    {
+	    GLint width, height;
+	    m_canvas.getImageDimensions(width, height);
+	    info.setProperty("width", width);
+	    info.setProperty("height", height);
+    }
     
-    return m_canvas.imageFromTexture(m_format, m_type, m_mipmapLevel);
+    return imageFromCanvas;
 }
 
 void Converter::setFormat(GLenum format)

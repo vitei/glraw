@@ -28,6 +28,14 @@ QByteArray CompressionConverter::convert(QImage & image, AssetInformation & info
     info.setProperty("compressedFormat", QVariant(static_cast<int>(m_compressedFormat)));
     info.setProperty("size", QVariant(imageData.size()));
     info.setProperty("mipmapLevel", QVariant(static_cast<int>(m_mipmapLevel)));
+
+    if (m_mipmapLevel != 0)
+    {
+	    GLint width, height;
+	    m_canvas.getImageDimensions(width, height);
+	    info.setProperty("width", width);
+	    info.setProperty("height", height);
+    }
     
     return imageData;
 }

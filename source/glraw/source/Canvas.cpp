@@ -36,6 +36,8 @@ namespace glraw
 Canvas::Canvas()
 :   QWindow((QScreen *)nullptr)
 ,   m_texture(0)
+,   m_width(0)
+,   m_height(0)
 ,   m_gl(new QOpenGLFunctions_3_2_Core)
 {
     setSurfaceType(OpenGLSurface);
@@ -104,6 +106,8 @@ QByteArray Canvas::imageFromTexture(GLenum format, GLenum type, GLint mipmapLeve
     GLint width, height;
     m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_WIDTH, &width);
     m_gl->glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmapLevel, GL_TEXTURE_HEIGHT, &height);
+    m_width = width;
+    m_height = height;
     
     QByteArray imageData;
     imageData.resize(numberOfElementsFor(format) * byteSizeOf(type) * width * height);
@@ -237,7 +241,13 @@ bool Canvas::textureLoaded() const
 {
     return m_texture != 0;
 }
-    
+
+void Canvas::getImageDimensions(GLint & width, GLint & height) const
+{
+	width = m_width;
+	height = m_height;
+}
+
 int Canvas::byteSizeOf(GLenum type)
 {
     switch (type)
